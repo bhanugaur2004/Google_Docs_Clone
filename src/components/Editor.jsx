@@ -2,8 +2,9 @@ import React from 'react'
 import { Box } from '@mui/material';
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
+import { io } from 'socket.io-client';
 
 const Componenet = styled.div`
     background: #F5F5F5;
@@ -29,9 +30,24 @@ const toolbarOptions = [
 ];
 
 const Editor = () => {
+    const [socket, setSocket] = useState();
+    const [quill, setQuill] = useState();
+
+
+
     useEffect(() => {
         const quillServer = new Quill('#container', { theme: 'snow', modules: { toolbar: toolbarOptions } });
-    }, [])
+        setQuill(quillServer);
+    }, []);
+
+    useEffect(() => {
+        const socketServer = io('http://localhost:9000');
+        setSocket(socketServer);
+
+        return () => {
+            socketServer.disconnect();
+        }
+    })
 
     return (
         <Componenet>
